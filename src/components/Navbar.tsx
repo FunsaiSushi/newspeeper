@@ -116,7 +116,7 @@ export function Navbar({
     >
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="text-xl font-bold">YouNews</span>
+          <span className="text-xl font-bold">Newspeeper</span>
           <span
             className={`text-sm font-semibold hidden md:block ${
               theme === "dark" ? "text-zinc-300" : "text-zinc-700"

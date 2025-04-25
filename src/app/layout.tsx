@@ -7,7 +7,7 @@ import "./globals.css";
 const lora = Lora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "YouNews",
+  title: "Newspeeper",
   description: "Less time, More News",
 };
 
