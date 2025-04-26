@@ -27,6 +27,12 @@ interface NewsItem {
   initialDownvotes: number;
   publisher: string;
   publishTime: string;
+  comments: Array<{
+    id: string;
+    text: string;
+    author: string;
+    timestamp: string;
+  }>;
 }
 
 // Sample news data - in a real app, this would come from an API
@@ -45,6 +51,20 @@ const sampleNews: NewsItem[] = [
     initialDownvotes: 3,
     publisher: "Sarah Chen",
     publishTime: "2 hours ago",
+    comments: [
+      {
+        id: "1",
+        text: "This is amazing! Can't wait to see how this technology evolves.",
+        author: "Tech Enthusiast",
+        timestamp: "1 hour ago",
+      },
+      {
+        id: "2",
+        text: "I'm curious about the potential applications in healthcare.",
+        author: "Medical Professional",
+        timestamp: "30 minutes ago",
+      },
+    ],
   },
   {
     source: "Sports Daily",
@@ -60,6 +80,20 @@ const sampleNews: NewsItem[] = [
     initialDownvotes: 5,
     publisher: "Michael Rodriguez",
     publishTime: "5 hours ago",
+    comments: [
+      {
+        id: "3",
+        text: "What a game! The team really deserved this win.",
+        author: "Sports Fan",
+        timestamp: "4 hours ago",
+      },
+      {
+        id: "4",
+        text: "The overtime was intense! Great performance by both teams.",
+        author: "Basketball Coach",
+        timestamp: "3 hours ago",
+      },
+    ],
   },
   {
     source: "Politics Today",
@@ -75,6 +109,20 @@ const sampleNews: NewsItem[] = [
     initialDownvotes: 23,
     publisher: "Emma Thompson",
     publishTime: "1 day ago",
+    comments: [
+      {
+        id: "5",
+        text: "Finally, some concrete action on climate change!",
+        author: "Environmental Activist",
+        timestamp: "20 hours ago",
+      },
+      {
+        id: "6",
+        text: "I hope this bill gets the support it needs.",
+        author: "Concerned Citizen",
+        timestamp: "18 hours ago",
+      },
+    ],
   },
   {
     source: "Entertainment Weekly",
@@ -90,6 +138,20 @@ const sampleNews: NewsItem[] = [
     initialDownvotes: 12,
     publisher: "James Wilson",
     publishTime: "3 hours ago",
+    comments: [
+      {
+        id: "7",
+        text: "The special effects were mind-blowing!",
+        author: "Movie Buff",
+        timestamp: "2 hours ago",
+      },
+      {
+        id: "8",
+        text: "I've already watched it twice!",
+        author: "Film Critic",
+        timestamp: "1 hour ago",
+      },
+    ],
   },
 ];
 
@@ -199,6 +261,7 @@ export function NewsFeed({
             publisher={news.publisher}
             publishTime={news.publishTime}
             onReport={onReport}
+            initialComments={news.comments}
           />
         ))
       ) : (

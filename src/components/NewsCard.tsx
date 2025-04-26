@@ -7,10 +7,12 @@ import {
   BiDownvote,
   BiSolidUpvote,
   BiSolidDownvote,
+  BiComment,
 } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoFlagOutline } from "react-icons/io5";
 import { useTheme } from "@/context/ThemeContext";
+import { NewsModal } from "./NewsModal";
 
 type Category = "All" | "Politics" | "Sports" | "Entertainment" | "Technology";
 
@@ -26,6 +28,12 @@ interface NewsCardProps {
   publisher: string;
   publishTime: string;
   onReport: (newsId: string) => void;
+  initialComments: Array<{
+    id: string;
+    text: string;
+    author: string;
+    timestamp: string;
+  }>;
 }
 
 export function NewsCard({
@@ -40,12 +48,14 @@ export function NewsCard({
   publisher,
   publishTime,
   onReport,
+  initialComments,
 }: NewsCardProps) {
   const [upvotes, setUpvotes] = useState(initialUpvotes);
   const [downvotes, setDownvotes] = useState(initialDownvotes);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
@@ -113,153 +123,188 @@ export function NewsCard({
   };
 
   return (
-    <div
-      className={`rounded-lg overflow-hidden shadow-lg ${
-        theme === "dark" ? "bg-zinc-800" : "bg-zinc-300"
-      }`}
-    >
-      <div className="p-4">
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <h3
-              className={`text-xl sm:text-2xl md:text-3xl font-bold mb-2 ${
-                theme === "dark" ? "text-zinc-100" : "text-zinc-900"
-              }`}
-            >
-              {title.length > 100 ? `${title.substring(0, 100)}...` : title}
-            </h3>
-            <p
-              className={`text-base sm:text-lg md:text-xl mb-2 font-medium ${
-                theme === "dark" ? "text-zinc-300" : "text-zinc-700"
-              }`}
-            >
-              {description.length > 200
-                ? `${description.substring(0, 200)}...`
-                : description}
-            </p>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm font-medium">
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+    <>
+      <div
+        className={`rounded-lg overflow-hidden shadow-lg ${
+          theme === "dark" ? "bg-zinc-800" : "bg-zinc-300"
+        }`}
+      >
+        <div className="p-4">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <h3
+                className={`text-xl sm:text-2xl md:text-3xl font-bold mb-2 ${
+                  theme === "dark" ? "text-zinc-100" : "text-zinc-900"
                 }`}
               >
-                {publisher}
-              </span>
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                {title.length > 100 ? `${title.substring(0, 100)}...` : title}
+              </h3>
+              <p
+                className={`text-base sm:text-lg md:text-xl mb-2 font-medium ${
+                  theme === "dark" ? "text-zinc-300" : "text-zinc-700"
                 }`}
               >
-                •
-              </span>
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
-                }`}
-              >
-                {source}
-              </span>
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
-                }`}
-              >
-                •
-              </span>
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
-                }`}
-              >
-                {category}
-              </span>
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
-                }`}
-              >
-                •
-              </span>
-              <span
-                className={`${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-600"
-                }`}
-              >
-                {publishTime}
-              </span>
-            </div>
-          </div>
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 cursor-pointer rounded-lg transition-colors ml-2 ${
-                theme === "dark"
-                  ? "text-zinc-100 hover:bg-zinc-700"
-                  : "text-zinc-900 hover:bg-zinc-400"
-              }`}
-            >
-              <BsThreeDotsVertical size={20} />
-            </button>
-            {isMenuOpen && (
-              <div
-                className={`absolute right-0 mt-2 w-32 rounded-lg shadow-lg overflow-hidden ${
-                  theme === "dark" ? "bg-zinc-700" : "bg-zinc-400"
-                }`}
-              >
-                <button
-                  onClick={() => {
-                    onReport(id);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-2 transition-colors cursor-pointer flex items-center space-x-2 font-medium ${
-                    theme === "dark"
-                      ? "text-zinc-100 hover:bg-zinc-600"
-                      : "text-zinc-900 hover:bg-zinc-500"
+                {description.length > 200
+                  ? `${description.substring(0, 200)}...`
+                  : description}
+              </p>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm font-medium">
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
                   }`}
                 >
-                  <IoFlagOutline size={18} />
-                  <span>Report</span>
-                </button>
+                  {publisher}
+                </span>
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                  }`}
+                >
+                  •
+                </span>
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                  }`}
+                >
+                  {source}
+                </span>
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                  }`}
+                >
+                  •
+                </span>
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                  }`}
+                >
+                  {category}
+                </span>
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                  }`}
+                >
+                  •
+                </span>
+                <span
+                  className={`${
+                    theme === "dark" ? "text-zinc-500" : "text-zinc-600"
+                  }`}
+                >
+                  {publishTime}
+                </span>
               </div>
-            )}
+            </div>
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className={`p-2 cursor-pointer rounded-lg transition-colors ml-2 ${
+                  theme === "dark"
+                    ? "text-zinc-100 hover:bg-zinc-700"
+                    : "text-zinc-900 hover:bg-zinc-400"
+                }`}
+              >
+                <BsThreeDotsVertical size={20} />
+              </button>
+              {isMenuOpen && (
+                <div
+                  className={`absolute right-0 mt-2 w-32 rounded-lg shadow-lg overflow-hidden ${
+                    theme === "dark" ? "bg-zinc-700" : "bg-zinc-400"
+                  }`}
+                >
+                  <button
+                    onClick={() => {
+                      onReport(id);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 transition-colors cursor-pointer flex items-center space-x-2 font-medium ${
+                      theme === "dark"
+                        ? "text-zinc-100 hover:bg-zinc-600"
+                        : "text-zinc-900 hover:bg-zinc-500"
+                    }`}
+                  >
+                    <IoFlagOutline size={18} />
+                    <span>Report</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {image && (
+          <div className="relative aspect-[16/10]">
+            <Image src={image} alt={title} className="object-cover" fill />
+          </div>
+        )}
+        <div className="px-4 py-2">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleUpvote}
+              className={`flex items-center space-x-1 cursor-pointer hover:bg-zinc-700 transition-colors duration-300 ease-in-out px-2 py-1 rounded-lg ${
+                theme === "dark"
+                  ? "text-zinc-100 hover:text-zinc-300"
+                  : "text-zinc-900 hover:text-zinc-700"
+              }`}
+            >
+              {hasUpvoted ? (
+                <BiSolidUpvote size={20} />
+              ) : (
+                <BiUpvote size={20} />
+              )}
+              <span>{upvotes}</span>
+            </button>
+            <button
+              onClick={handleDownvote}
+              className={`flex items-center space-x-1 cursor-pointer hover:bg-zinc-700 transition-colors duration-300 ease-in-out px-2 py-1 rounded-lg ${
+                theme === "dark"
+                  ? "text-zinc-100 hover:text-zinc-300"
+                  : "text-zinc-900 hover:text-zinc-700"
+              }`}
+            >
+              {hasDownvoted ? (
+                <BiSolidDownvote size={20} />
+              ) : (
+                <BiDownvote size={20} />
+              )}
+              <span>{downvotes}</span>
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={`flex items-center space-x-1 cursor-pointer hover:bg-zinc-700 transition-colors duration-300 ease-in-out px-2 py-1 rounded-lg ${
+                theme === "dark"
+                  ? "text-zinc-100 hover:text-zinc-300"
+                  : "text-zinc-900 hover:text-zinc-700"
+              }`}
+            >
+              <BiComment size={20} />
+              <span>{initialComments.length}</span>
+            </button>
           </div>
         </div>
       </div>
-      {image && (
-        <div className="relative aspect-[16/10]">
-          <Image src={image} alt={title} className="object-cover" fill />
-        </div>
-      )}
-      <div className="p-4">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={handleUpvote}
-            className={`flex items-center space-x-1 transition-colors font-medium ${
-              theme === "dark"
-                ? "text-zinc-100 hover:text-zinc-300"
-                : "text-zinc-900 hover:text-zinc-700"
-            }`}
-          >
-            {hasUpvoted ? <BiSolidUpvote size={20} /> : <BiUpvote size={20} />}
-            <span>{upvotes}</span>
-          </button>
-          <button
-            onClick={handleDownvote}
-            className={`flex items-center space-x-1 transition-colors ${
-              theme === "dark"
-                ? "text-zinc-100 hover:text-zinc-300"
-                : "text-zinc-900 hover:text-zinc-700"
-            }`}
-          >
-            {hasDownvoted ? (
-              <BiSolidDownvote size={20} />
-            ) : (
-              <BiDownvote size={20} />
-            )}
-            <span>{downvotes}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+      <NewsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        news={{
+          source,
+          title,
+          description,
+          image,
+          category,
+          id,
+          initialUpvotes: upvotes,
+          initialDownvotes: downvotes,
+          publisher,
+          publishTime,
+        }}
+        initialComments={initialComments}
+        onReport={onReport}
+      />
+    </>
   );
 }
